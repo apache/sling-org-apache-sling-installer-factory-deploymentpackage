@@ -20,19 +20,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache.sling</groupId>
-        <artifactId>sling</artifactId>
-        <version>26</version>
+        <artifactId>sling-bundle-parent</artifactId>
+        <version>49</version>
         <relativePath/>
     </parent>
 
     <artifactId>org.apache.sling.installer.factory.deploymentpackage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>bundle</packaging>
 
     <name>Apache Sling Deployment Package Installer</name>
     <description> 
         Provides support for deployment packages to the Apache Sling OSGi installer
     </description>
+
+    <properties>
+        <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
+    </properties>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-installer-factory-deploymentpackage.git</connection>
@@ -40,38 +43,27 @@
         <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-installer-factory-deploymentpackage.git</url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Activator>
-                            org.apache.sling.installer.factories.deploypck.impl.Activator
-                        </Bundle-Activator>
-                        <Private-Package>
-                            org.apache.sling.installer.factories.deploypck.impl.*
-                        </Private-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
+            <artifactId>org.osgi.service.deploymentadmin</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.annotation.bundle</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>

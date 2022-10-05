@@ -31,7 +31,9 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
+import org.osgi.annotation.bundle.Header;
 
+@Header(name = Constants.BUNDLE_ACTIVATOR, value = "${@class}")
 public class Activator implements ServiceListener, BundleActivator {
 
     private static final String DEPLOYMENT_ADMIN = "org.osgi.service.deploymentadmin.DeploymentAdmin";
