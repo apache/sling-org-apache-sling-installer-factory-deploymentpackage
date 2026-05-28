@@ -40,8 +40,7 @@ import org.osgi.service.deploymentadmin.DeploymentAdmin;
  * It listens for files ending with ".dp" and installs them through
  * the deployment package admin.
  */
-public class DeploymentPackageInstaller
-    implements ResourceTransformer, InstallTaskFactory {
+public class DeploymentPackageInstaller implements ResourceTransformer, InstallTaskFactory {
 
     public static final String DEPLOYMENTPACKAGE_SYMBOLICMAME = "DeploymentPackage-SymbolicName";
     public static final String DEPLOYMENTPACKAGE_VERSION = "DeploymentPackage-Version";
@@ -58,7 +57,7 @@ public class DeploymentPackageInstaller
      * @see org.apache.sling.installer.api.tasks.ResourceTransformer#transform(org.apache.sling.installer.api.tasks.RegisteredResource)
      */
     public TransformationResult[] transform(final RegisteredResource resource) {
-        if ( resource.getType().equals(InstallableResource.TYPE_FILE) ) {
+        if (resource.getType().equals(InstallableResource.TYPE_FILE)) {
             try {
                 final Manifest m = getManifest(resource.getInputStream());
                 if (m != null) {
@@ -92,11 +91,11 @@ public class DeploymentPackageInstaller
     private Manifest getManifest(final InputStream ins) throws IOException {
         Manifest result = null;
 
-        if ( ins != null ) {
+        if (ins != null) {
             JarInputStream jis = null;
             try {
                 jis = new JarInputStream(ins);
-                result= jis.getManifest();
+                result = jis.getManifest();
 
             } finally {
 
@@ -123,7 +122,7 @@ public class DeploymentPackageInstaller
      * @see org.apache.sling.installer.api.tasks.InstallTaskFactory#createTask(org.apache.sling.installer.api.tasks.TaskResourceGroup)
      */
     public InstallTask createTask(final TaskResourceGroup toActivate) {
-        if ( toActivate.getActiveResource().getType().equals(TYPE_DP) ) {
+        if (toActivate.getActiveResource().getType().equals(TYPE_DP)) {
             return new DeployPckTask(toActivate, this.deploymentAdmin);
         }
         return null;

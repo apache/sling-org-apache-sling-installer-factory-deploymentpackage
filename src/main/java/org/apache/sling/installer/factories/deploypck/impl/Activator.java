@@ -23,6 +23,7 @@ import java.util.Hashtable;
 
 import org.apache.sling.installer.api.tasks.InstallTaskFactory;
 import org.apache.sling.installer.api.tasks.ResourceTransformer;
+import org.osgi.annotation.bundle.Header;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -31,7 +32,6 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
-import org.osgi.annotation.bundle.Header;
 
 @Header(name = Constants.BUNDLE_ACTIVATOR, value = "${@class}")
 public class Activator implements ServiceListener, BundleActivator {
@@ -53,11 +53,9 @@ public class Activator implements ServiceListener, BundleActivator {
     public void start(final BundleContext context) throws Exception {
         this.bundleContext = context;
         this.getAdmin();
-        this.bundleContext.addServiceListener(this, "(" + Constants.OBJECTCLASS
-                + "=" + DEPLOYMENT_ADMIN + ")");
-
-        }
-        /**
+        this.bundleContext.addServiceListener(this, "(" + Constants.OBJECTCLASS + "=" + DEPLOYMENT_ADMIN + ")");
+    }
+    /**
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
     public void stop(final BundleContext context) throws Exception {
@@ -68,17 +66,19 @@ public class Activator implements ServiceListener, BundleActivator {
 
     private void getAdmin() {
         this.deploymentAdminReference = this.bundleContext.getServiceReference(DEPLOYMENT_ADMIN);
-        if ( this.deploymentAdminReference != null ) {
-            final DeploymentAdmin deploymentAdmin = (DeploymentAdmin) this.bundleContext.getService(this.deploymentAdminReference);
-            if ( deploymentAdmin == null ) {
+        if (this.deploymentAdminReference != null) {
+            final DeploymentAdmin deploymentAdmin =
+                    (DeploymentAdmin) this.bundleContext.getService(this.deploymentAdminReference);
+            if (deploymentAdmin == null) {
                 this.deploymentAdminReference = null;
             } else {
                 final Dictionary<String, Object> props = new Hashtable<String, Object>();
                 props.put(Constants.SERVICE_DESCRIPTION, "Apache Sling Installer Support for Deployment Packages");
                 props.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
-                this.serviceReg = this.bundleContext.registerService(new String[] {ResourceTransformer.class.getName(),
-                        InstallTaskFactory.class.getName()},
-                    new DeploymentPackageInstaller(deploymentAdmin), props);
+                this.serviceReg = this.bundleContext.registerService(
+                        new String[] {ResourceTransformer.class.getName(), InstallTaskFactory.class.getName()},
+                        new DeploymentPackageInstaller(deploymentAdmin),
+                        props);
             }
         }
     }
@@ -88,19 +88,19 @@ public class Activator implements ServiceListener, BundleActivator {
      * @see org.osgi.framework.ServiceListener#serviceChanged(org.osgi.framework.ServiceEvent)
      */
     public synchronized void serviceChanged(final ServiceEvent event) {
-        if ( event.getType() == ServiceEvent.REGISTERED && this.deploymentAdminReference == null ) {
+        if (event.getType() == ServiceEvent.REGISTERED && this.deploymentAdminReference == null) {
             this.getAdmin();
-        } else if ( event.getType() == ServiceEvent.UNREGISTERING && this.deploymentAdminReference != null ) {
+        } else if (event.getType() == ServiceEvent.UNREGISTERING && this.deploymentAdminReference != null) {
             this.unregister();
         }
     }
 
     private void unregister() {
-        if ( this.deploymentAdminReference != null ) {
+        if (this.deploymentAdminReference != null) {
             this.bundleContext.ungetService(this.deploymentAdminReference);
             this.deploymentAdminReference = null;
         }
-        if ( serviceReg != null ) {
+        if (serviceReg != null) {
             serviceReg.unregister();
             serviceReg = null;
         }
