@@ -51,8 +51,8 @@ public class DeployPckTask extends InstallTask {
         final TaskResource tr = this.getResource();
 
         // get and check symbolic name
-        final String symbolicName = (String)tr.getAttribute(DeploymentPackageInstaller.DEPLOYMENTPACKAGE_SYMBOLICMAME);
-        if ( symbolicName == null ) {
+        final String symbolicName = (String) tr.getAttribute(DeploymentPackageInstaller.DEPLOYMENTPACKAGE_SYMBOLICMAME);
+        if (symbolicName == null) {
             logger.error("Resource {} has no symbolic name - ignoring.", tr);
             this.getResourceGroup().setFinishState(ResourceState.IGNORED);
             return;
@@ -61,18 +61,19 @@ public class DeployPckTask extends InstallTask {
         // get package if available
         final DeploymentPackage dp = this.deploymentAdmin.getDeploymentPackage(symbolicName);
 
-        if ( tr.getState() == ResourceState.INSTALL) {
+        if (tr.getState() == ResourceState.INSTALL) {
             InputStream is = null;
             try {
                 is = tr.getInputStream();
-                if ( is == null ) {
+                if (is == null) {
                     // something went wrong
                     logger.error("Resource {} does not provide an input stream!", tr);
                     this.getResourceGroup().setFinishState(ResourceState.IGNORED);
                 } else {
-                    final Version newVersion = new Version((String)tr.getAttribute(DeploymentPackageInstaller.DEPLOYMENTPACKAGE_VERSION));
+                    final Version newVersion =
+                            new Version((String) tr.getAttribute(DeploymentPackageInstaller.DEPLOYMENTPACKAGE_VERSION));
                     // check version
-                    if ( dp != null ) {
+                    if (dp != null) {
                         final int compare = dp.getVersion().compareTo(newVersion);
                         if (compare < 0) {
                             // installed version is lower -> update
@@ -81,7 +82,7 @@ public class DeployPckTask extends InstallTask {
                             this.getResourceGroup().setFinishState(ResourceState.INSTALLED);
                         } else if (compare >= 0) {
                             logger.debug("Deployment package " + symbolicName + " " + newVersion
-                                        + " is not installed, package with higher or same version is already installed.");
+                                    + " is not installed, package with higher or same version is already installed.");
                         }
                     } else {
                         this.deploymentAdmin.installDeploymentPackage(is);
@@ -90,32 +91,28 @@ public class DeployPckTask extends InstallTask {
                     }
                 }
             } catch (final DeploymentException e) {
-                logger.error("Unable to install deployment package {} from resource {}",
-                        symbolicName,
-                        tr);
+                logger.error("Unable to install deployment package {} from resource {}", symbolicName, tr);
                 this.getResourceGroup().setFinishState(ResourceState.IGNORED);
             } catch (final IOException ioe) {
-                logger.error("Unable to install deployment package {} from resource {}",
-                        symbolicName,
-                        tr);
+                logger.error("Unable to install deployment package {} from resource {}", symbolicName, tr);
                 this.getResourceGroup().setFinishState(ResourceState.IGNORED);
             } finally {
-                if ( is != null ) {
+                if (is != null) {
                     try {
                         is.close();
-                    } catch (IOException ignore) {}
+                    } catch (IOException ignore) {
+                    }
                 }
             }
         } else { // uninstall
-            if ( dp != null ) {
+            if (dp != null) {
                 try {
                     dp.uninstall();
                 } catch (final DeploymentException e) {
                     logger.error("Unable to uninstall deployment package {} from resource {}", symbolicName, tr);
                 }
             } else {
-                logger.info("Unable to find deployment package with symbolic name {} for uninstalling.",
-                        symbolicName);
+                logger.info("Unable to find deployment package with symbolic name {} for uninstalling.", symbolicName);
             }
             this.getResourceGroup().setFinishState(ResourceState.UNINSTALLED);
         }
